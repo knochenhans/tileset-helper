@@ -14,6 +14,12 @@ It adds nothing at runtime and ships nothing into your game - it only changes th
 
 **Copy between layers.** The same menu gains **Copy Between Physics/Navigation**. Pick a from-layer and a to-layer (any physics or navigation layer) and it copies shapes from one to the other on every tile of every source. Physics-to-navigation bakes a navigation polygon from the collision shapes; navigation-to-physics does the reverse. One undo step.
 
+<img width="522" height="492" alt="image" src="https://github.com/user-attachments/assets/f67d7d99-a14c-4d08-b02b-80e483bb1ece" />
+
+<img width="493" height="294" alt="image" src="https://github.com/user-attachments/assets/99633d5a-88a1-470c-a734-4f1cfa51a4a3" />
+
+<img width="465" height="291" alt="image" src="https://github.com/user-attachments/assets/5c51a824-13de-409b-9feb-2f0e29c1a1ec" />
+
 ## Build
 
 Requires `godot-cpp` checked out as a sibling folder (`../godot-cpp`) and SCons.
