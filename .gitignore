@@ -1,0 +1,20 @@
+# Build output is written to bin/; only the descriptor is tracked.
+/bin/*
+!/bin/tileset_helper.gdextension
+
+# SCons build artifacts
+*.obj
+*.os
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.lib
+*.exp
+*.pdb
+.sconsign.dblite
+*.pyc
+__pycache__/
+
+.idea
