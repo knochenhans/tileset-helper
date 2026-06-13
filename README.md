@@ -1,8 +1,10 @@
 # TileSet Helper
 
-An editor-only Godot 4 GDExtension that adds copy/paste of tile collision and navigation shapes to the built-in TileSet editor. Authoring shapes tile-by-tile is slow; this makes it fast, especially across recoloured copies of the same tile sheet.
+A free editor-only Godot 4 GDExtension that adds copy/paste of tile collision and navigation shapes to the built-in TileSet editor. Authoring shapes tile-by-tile is slow; this makes it fast, especially across recoloured copies of the same tile sheet.
 
 It adds nothing at runtime and ships nothing into your game - it only changes the editor.
+
+[Get it pre-compiled on the Godot Asset Store for free](https://store.godotengine.org/asset/fogspire-games/tileset-helper/)
 
 ## What it adds
 
