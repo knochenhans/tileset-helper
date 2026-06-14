@@ -49,7 +49,9 @@ mkdir -p "$PKG_BIN"
 echo "==> Staging addon to $PKG"
 cp -f "$DEBUG_DLL" "$RELEASE_DLL" "$PKG_BIN"/
 
-# Distribution descriptor: addons path, Windows-only, requires Godot 4.6+.
+# Distribution descriptor: addons path, Windows-only, requires Godot 4.6+. Editor-only:
+# the `editor` feature tag is present only in the running editor, never in an exported
+# game, so this never gets bundled into a downstream user's build.
 cat > "$PKG/tileset_helper.gdextension" <<'EOF'
 [configuration]
 
@@ -59,8 +61,7 @@ reloadable = true
 
 [libraries]
 
-windows.debug.x86_64 = "res://addons/tileset_helper/bin/libtileset_helper.windows.template_debug.x86_64.dll"
-windows.release.x86_64 = "res://addons/tileset_helper/bin/libtileset_helper.windows.template_release.x86_64.dll"
+windows.editor.x86_64 = "res://addons/tileset_helper/bin/libtileset_helper.windows.template_debug.x86_64.dll"
 EOF
 
 # README and LICENSE (whatever extension the license uses).

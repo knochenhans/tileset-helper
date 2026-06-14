@@ -6,11 +6,9 @@ reloadable = true
 
 [libraries]
 
-windows.debug.x86_64 = "res://bin/libtileset_helper.windows.template_debug.x86_64.dll"
-windows.release.x86_64 = "res://bin/libtileset_helper.windows.template_release.x86_64.dll"
-
-linux.debug.x86_64 = "res://bin/libtileset_helper.linux.template_debug.x86_64.so"
-linux.release.x86_64 = "res://bin/libtileset_helper.linux.template_release.x86_64.so"
-
-macos.debug = "res://bin/libtileset_helper.macos.template_debug.framework"
-macos.release = "res://bin/libtileset_helper.macos.template_release.framework"
+# Editor-only tool: the `editor` feature tag exists only while the Godot editor runs,
+# never in an exported game, so these libraries are never bundled into a build. We point
+# the editor at the template_debug build (the editor is itself a debug build).
+windows.editor.x86_64 = "res://bin/libtileset_helper.windows.template_debug.x86_64.dll"
+linux.editor.x86_64 = "res://bin/libtileset_helper.linux.template_debug.x86_64.so"
+macos.editor = "res://bin/libtileset_helper.macos.template_debug.framework"
