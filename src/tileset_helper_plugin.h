@@ -73,6 +73,13 @@ class TileSetHelperPlugin : public EditorPlugin
 	static MenuButton *_find_menu_button(Node *p_root, const String &p_item_substr);
 	static int _find_item_by_text(PopupMenu *p_popup, const String &p_text_substr);
 
+	// Resolve the TileSet to act on at click time. _edit() only fires when the
+	// TileSet *resource* is the edited object; editing a tileset through a
+	// TileMapLayer/TileMap node (the common case) never sets current_tile_set, so
+	// we fall back to the inspector's edited object and then the node selection.
+	Ref<TileSet> _resolve_tile_set() const;
+	static Ref<TileSet> _tile_set_from_object(Object *p_obj);
+
 protected:
 	static void _bind_methods();
 

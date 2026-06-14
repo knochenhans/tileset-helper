@@ -4,7 +4,9 @@
 #include "layer_copy_dialog.h"
 
 #include <godot_cpp/classes/control.hpp>
+#include <godot_cpp/classes/editor_inspector.hpp>
 #include <godot_cpp/classes/editor_interface.hpp>
+#include <godot_cpp/classes/editor_selection.hpp>
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/classes/input_event.hpp>
 #include <godot_cpp/classes/input_event_key.hpp>
@@ -18,6 +20,7 @@
 #include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/variant/packed_vector2_array.hpp>
+#include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
@@ -475,17 +478,85 @@ void TileSetHelperPlugin::_paste_shapes(Object *p_polygon_editor)
 	UtilityFunctions::print("[TileSetHelper] Pasted ", pasted, " shape(s).");
 }
 
+Ref<TileSet> TileSetHelperPlugin::_tile_set_from_object(Object *p_obj)
+{
+	if (!p_obj)
+	{
+		return Ref<TileSet>();
+	}
+	// The object itself is a TileSet (standalone resource being edited)...
+	if (TileSet *ts = Object::cast_to<TileSet>(p_obj))
+	{
+		return Ref<TileSet>(ts);
+	}
+	// ...or it owns one through a "tile_set" property (TileMapLayer, TileMap).
+	const Variant v = p_obj->get("tile_set");
+	if (v.get_type() == Variant::OBJECT)
+	{
+		Object *o = v;
+		if (TileSet *ts = Object::cast_to<TileSet>(o))
+		{
+			return Ref<TileSet>(ts);
+		}
+	}
+	return Ref<TileSet>();
+}
+
+Ref<TileSet> TileSetHelperPlugin::_resolve_tile_set() const
+{
+	if (current_tile_set.is_valid())
+	{
+		return current_tile_set;
+	}
+
+	EditorInterface *ei = EditorInterface::get_singleton();
+	if (!ei)
+	{
+		return Ref<TileSet>();
+	}
+
+	// What the inspector is showing right now: the TileSet resource, or a node
+	// (TileMapLayer / TileMap) that owns one. This is the case _edit() misses.
+	if (EditorInspector *insp = ei->get_inspector())
+	{
+		Ref<TileSet> ts = _tile_set_from_object(insp->get_edited_object());
+		if (ts.is_valid())
+		{
+			return ts;
+		}
+	}
+
+	// Last resort: a selected node that owns a TileSet.
+	if (EditorSelection *sel = ei->get_selection())
+	{
+		const TypedArray<Node> nodes = sel->get_selected_nodes();
+		for (int i = 0; i < nodes.size(); i++)
+		{
+			Object *n = nodes[i];
+			Ref<TileSet> ts = _tile_set_from_object(n);
+			if (ts.is_valid())
+			{
+				return ts;
+			}
+		}
+	}
+	return Ref<TileSet>();
+}
+
 void TileSetHelperPlugin::_on_sources_menu_pressed(int p_id, Object *p_tileset_editor)
 {
 	if (p_id != BULK_COPY && p_id != LAYER_COPY)
 	{
 		return;
 	}
-	if (current_tile_set.is_null())
+	Ref<TileSet> resolved = _resolve_tile_set();
+	if (resolved.is_null())
 	{
 		UtilityFunctions::push_warning("[TileSetHelper] No edited TileSet is available.");
 		return;
 	}
+	// Cache so the dialogs (and any follow-up press) use the same instance.
+	current_tile_set = resolved;
 
 	EditorInterface *ei = EditorInterface::get_singleton();
 	if (!ei)
