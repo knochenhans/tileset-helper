@@ -1,4 +1,10 @@
-# TileSet Helper
+# TileSet Helper (C#)
+
+Stripped down C# version of TileSet Helper. Fixes UI positioning by placing in bottom dock toolbar. Also removes GDExtension code, because I have no clue of it and it doesn’t seem to be needed -- simply copy the addon folder to your project’s addon folder, rebuild and reload the project, and activate the addon in the project settings.
+
+---
+
+Original readme text:
 
 A free editor-only Godot 4 GDExtension that adds copy/paste of tile collision and navigation shapes to the built-in TileSet editor. Authoring shapes tile-by-tile is slow; this makes it fast, especially across recoloured copies of the same tile sheet.
 
@@ -21,31 +27,6 @@ It adds nothing at runtime and ships nothing into your game - it only changes th
 <img width="493" height="294" alt="image" src="https://github.com/user-attachments/assets/99633d5a-88a1-470c-a734-4f1cfa51a4a3" />
 
 <img width="465" height="291" alt="image" src="https://github.com/user-attachments/assets/5c51a824-13de-409b-9feb-2f0e29c1a1ec" />
-
-## Build
-
-Requires `godot-cpp` checked out as a sibling folder (`../godot-cpp`) and SCons.
-
-```
-scons platform=windows target=template_debug
-```
-
-The editor loads the `template_debug` build, so that is all you need.
-
-## Install / update
-
-Copy `bin/libtileset_helper.*.dll` and `bin/tileset_helper.gdextension` into your project's `bin/` folder, then **Project > Reload Current Project**.
-
-Or use the helper script, which builds and deploys in one step (and clears the editor's reload shadow so the new build is picked up):
-
-```
-scripts/update.ps1 -Dest "C:\MyGame\bin"      # Windows
-scripts/update.sh  --dest /path/to/MyGame/bin # Linux / macOS
-```
-
-## Caveat
-
-It works by walking the editor's node tree to find the TileSet editor's menus, so it is tied to the editor layout of the Godot version it was built against (4.6). Lookups are defensive and idempotent: if a future Godot moves things, the menu items simply do not appear - nothing breaks.
 
 ## Changelog
 

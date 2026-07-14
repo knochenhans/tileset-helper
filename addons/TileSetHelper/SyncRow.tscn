@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://bi7bc24c1nx0h"]
+
+[ext_resource type="Script" uid="uid://lexrjwfi55s1" path="res://addons/TileSetHelper/SyncRow.cs" id="1_c8wmt"]
+
+[node name="SyncRow" type="HBoxContainer" unique_id=1415058565 node_paths=PackedStringArray("title", "copy", "paste")]
+alignment = 2
+script = ExtResource("1_c8wmt")
+title = NodePath("Title")
+copy = NodePath("Copy")
+paste = NodePath("Paste")
+
+[node name="Title" type="Label" parent="." unique_id=98305412]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Layer "
+
+[node name="Copy" type="Button" parent="." unique_id=1803562895]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Copy"
+
+[node name="Paste" type="Button" parent="." unique_id=1258667298]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Paste"

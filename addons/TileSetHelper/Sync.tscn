@@ -1,0 +1,117 @@
+[gd_scene format=3 uid="uid://nw68iqfedb00"]
+
+[ext_resource type="Script" uid="uid://dsn6jjfo20cy7" path="res://addons/TileSetHelper/Sync.cs" id="1_en04k"]
+[ext_resource type="PackedScene" uid="uid://bi7bc24c1nx0h" path="res://addons/TileSetHelper/SyncRow.tscn" id="2_mjpsm"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_en04k"]
+
+[node name="Sync" type="AcceptDialog" unique_id=1979220089 node_paths=PackedStringArray("SourceNode", "PhysicNode", "TerrainNode", "NavigationNode", "CustomDataNode", "OccluderNode")]
+auto_translate_mode = 2
+oversampling_override = 1.0
+title = "Sync"
+initial_position = 2
+size = Vector2i(500, 500)
+visible = true
+script = ExtResource("1_en04k")
+syncRow = ExtResource("2_mjpsm")
+SourceNode = NodePath("Main/HBoxContainer/Source_Node")
+PhysicNode = NodePath("Main/HBoxContainer/Data_Panel/Physic_Node")
+TerrainNode = NodePath("Main/HBoxContainer/Data_Panel/Terrain_Node")
+NavigationNode = NodePath("Main/HBoxContainer/Data_Panel/Navigation_Node")
+CustomDataNode = NodePath("Main/HBoxContainer/Data_Panel/Custom_Data_Node")
+OccluderNode = NodePath("Main/HBoxContainer/Data_Panel/Occluder_Node")
+
+[node name="Main" type="VBoxContainer" parent="." unique_id=17532561]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 492.0
+offset_bottom = 451.0
+
+[node name="HSeparator" type="HSeparator" parent="Main" unique_id=1755020795]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Main" unique_id=826066254]
+layout_mode = 2
+
+[node name="Source_Node" type="VBoxContainer" parent="Main/HBoxContainer" unique_id=1214603232]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="VSeparator" type="VSeparator" parent="Main/HBoxContainer" unique_id=622745877]
+layout_mode = 2
+
+[node name="Data_Panel" type="VBoxContainer" parent="Main/HBoxContainer" unique_id=330306142]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Physic_Node" type="VBoxContainer" parent="Main/HBoxContainer/Data_Panel" unique_id=1417049897]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Title" type="Button" parent="Main/HBoxContainer/Data_Panel/Physic_Node" unique_id=1632418984]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_en04k")
+text = "Physics"
+
+[node name="HSeparator" type="HSeparator" parent="Main/HBoxContainer/Data_Panel/Physic_Node" unique_id=801733717]
+layout_mode = 2
+
+[node name="Terrain_Node" type="VBoxContainer" parent="Main/HBoxContainer/Data_Panel" unique_id=527925645]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Title" type="Button" parent="Main/HBoxContainer/Data_Panel/Terrain_Node" unique_id=229354364]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_en04k")
+text = "Terrain"
+
+[node name="HSeparator" type="HSeparator" parent="Main/HBoxContainer/Data_Panel/Terrain_Node" unique_id=2118629219]
+layout_mode = 2
+
+[node name="Navigation_Node" type="VBoxContainer" parent="Main/HBoxContainer/Data_Panel" unique_id=947588513]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Title" type="Button" parent="Main/HBoxContainer/Data_Panel/Navigation_Node" unique_id=1897838401]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_en04k")
+text = "Navigation"
+
+[node name="HSeparator" type="HSeparator" parent="Main/HBoxContainer/Data_Panel/Navigation_Node" unique_id=1928404570]
+layout_mode = 2
+
+[node name="Custom_Data_Node" type="VBoxContainer" parent="Main/HBoxContainer/Data_Panel" unique_id=1840803466]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Title" type="Button" parent="Main/HBoxContainer/Data_Panel/Custom_Data_Node" unique_id=1328970466]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_en04k")
+text = "Custom Data"
+
+[node name="HSeparator" type="HSeparator" parent="Main/HBoxContainer/Data_Panel/Custom_Data_Node" unique_id=1954776418]
+layout_mode = 2
+
+[node name="Occluder_Node" type="VBoxContainer" parent="Main/HBoxContainer/Data_Panel" unique_id=1261545339]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Title" type="Button" parent="Main/HBoxContainer/Data_Panel/Occluder_Node" unique_id=28653558]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/focus = SubResource("StyleBoxEmpty_en04k")
+text = "Occluder"
+
+[node name="HSeparator" type="HSeparator" parent="Main/HBoxContainer/Data_Panel/Occluder_Node" unique_id=1656153452]
+layout_mode = 2
+
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
