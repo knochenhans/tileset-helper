@@ -4,7 +4,7 @@ using Godot.Collections;
 using System.Linq;
 
 [Tool]
-public partial class Sync : AcceptDialog
+public partial class Sync : ScrollContainer
 {
 	[Export] private PackedScene syncRow;
 
@@ -16,7 +16,6 @@ public partial class Sync : AcceptDialog
 	[Export] private VBoxContainer OccluderNode;
 
 	private Node root;
-
 
 	public TileMapLayer tileMapLayer;
 	public TileSet tileSet;
@@ -62,8 +61,10 @@ public partial class Sync : AcceptDialog
 
 	public void UpdateView()
 	{
+		ClearDynamicViews();
 		ReadData();
 		CountTilesData();
+
 		var buttonGroup = new ButtonGroup();
 		var sourceCount = tileSet.GetSourceCount();
 		for (int sourceIndex = 0; sourceIndex < sourceCount; sourceIndex++)
@@ -76,7 +77,10 @@ public partial class Sync : AcceptDialog
 			};
 			SourceNode.AddChild(check_box);
 			SourceNode.AddChild(new HSeparator());
-			check_box.Pressed += () => OnUpdateSourceIndex(sourceIndex);
+
+			int localIndex = sourceIndex;
+			check_box.Pressed += () => OnUpdateSourceIndex(localIndex);
+
 			if (sourceIndex == 0)
 			{
 				check_box.ButtonPressed = true;
@@ -90,74 +94,105 @@ public partial class Sync : AcceptDialog
 			var syncRowPhysicsInstance = (HBoxContainer)syncRow.Instantiate();
 			PhysicNode.AddChild(syncRowPhysicsInstance);
 			syncRowPhysicsInstance.GetNode<Label>("Title").Text = "Layer " + layerIDPhysics;
-			syncRowPhysicsInstance.GetNode<Button>("Copy").Pressed += () => OnLayerCopy(layerIDPhysics);
-			syncRowPhysicsInstance.GetNode<Button>("Paste").Pressed += () => OnPhysicsPaste(layerIDPhysics);
-			PhysicNode.Visible = physicsLayers > 0;
 
-			var terrainSets = tileSet.GetTerrainSetsCount();
-			for (int terrainSet = 0; terrainSet < terrainSets; terrainSet++)
+			int localLayer = layerIDPhysics;
+			syncRowPhysicsInstance.GetNode<Button>("Copy").Pressed += () => OnLayerCopy(localLayer);
+			syncRowPhysicsInstance.GetNode<Button>("Paste").Pressed += () => OnPhysicsPaste(localLayer);
+		}
+		PhysicNode.Visible = physicsLayers > 0;
+
+		var terrainSets = tileSet.GetTerrainSetsCount();
+		for (int terrainSet = 0; terrainSet < terrainSets; terrainSet++)
+		{
+			var terrainMode = tileSet.GetTerrainSetMode(terrainSet);
+			var terrainTitle = new Label
 			{
-				var terrainMode = tileSet.GetTerrainSetMode(terrainSet);
-				var terrainTitle = new Label
-				{
-					Text = "Terrain Set " + terrainSet + " - " + "Mode " + (int)terrainMode
-				};
-				TerrainNode.AddChild(terrainTitle);
-				var terrains = tileSet.GetTerrainsCount(terrainSet);
-				for (int terrainIndex = 0; terrainIndex < terrains; terrainIndex++)
-				{
-					var syncRowInstance = (HBoxContainer)syncRow.Instantiate();
-					TerrainNode.AddChild(syncRowInstance);
-					syncRowInstance.GetNode<Label>("Title").Text = tileSet.GetTerrainName(terrainSet, terrainIndex);
-					syncRowInstance.GetNode<Button>("Copy").Pressed += () => OnTerrainCopy((int)terrainMode);
-					syncRowInstance.GetNode<Button>("Paste").Pressed += () => OnTerrainPaste((int)terrainMode, terrainSet, terrainIndex);
-				}
-				TerrainNode.Visible = terrainSets > 0;
+				Text = "Terrain Set " + terrainSet + " - " + "Mode " + (int)terrainMode
+			};
+			TerrainNode.AddChild(terrainTitle);
 
-				var navigationLayers = tileSet.GetNavigationLayersCount();
-				for (int layerID = 0; layerID < navigationLayers; layerID++)
-				{
-					var syncRowInstance = (HBoxContainer)syncRow.Instantiate();
-					NavigationNode.AddChild(syncRowInstance);
-					syncRowInstance.GetNode<Label>("Title").Text = "Layer " + layerID;
-					syncRowInstance.GetNode<Button>("Copy").Pressed += () => OnLayerCopy(layerID);
-					syncRowInstance.GetNode<Button>("Paste").Pressed += () => OnNavigationPaste(layerID);
-				}
-				NavigationNode.Visible = navigationLayers > 0;
+			var terrains = tileSet.GetTerrainsCount(terrainSet);
+			for (int terrainIndex = 0; terrainIndex < terrains; terrainIndex++)
+			{
+				var syncRowInstance = (HBoxContainer)syncRow.Instantiate();
+				TerrainNode.AddChild(syncRowInstance);
+				syncRowInstance.GetNode<Label>("Title").Text = tileSet.GetTerrainName(terrainSet, terrainIndex);
 
-				var custom_data_layers = tileSet.GetCustomDataLayersCount();
-				for (int layerID = 0; layerID < custom_data_layers; layerID++)
-				{
-					var syncRowInstance = (HBoxContainer)syncRow.Instantiate();
-					CustomDataNode.AddChild(syncRowInstance);
-					var customDataName = tileSet.GetCustomDataLayerName(layerID);
-					syncRowInstance.GetNode<Label>("Title").Text = "Custom Data - " + customDataName;
-					syncRowInstance.GetNode<Button>("Copy").Pressed += () => OnLayerCopy(layerID);
-					syncRowInstance.GetNode<Button>("Copy").Pressed += () => OnCustomDataCopy(customDataName);
-					syncRowInstance.GetNode<Button>("Paste").Pressed += () => OnCustomDataPaste(layerID);
-				}
-				CustomDataNode.Visible = custom_data_layers > 0;
+				int localSet = terrainSet;
+				int localTerrain = terrainIndex;
+				syncRowInstance.GetNode<Button>("Copy").Pressed += () => OnTerrainCopy((int)terrainMode);
+				syncRowInstance.GetNode<Button>("Paste").Pressed += () => OnTerrainPaste((int)terrainMode, localSet, localTerrain);
+			}
+		}
+		TerrainNode.Visible = terrainSets > 0;
 
-				var occluder_layers = tileSet.GetOcclusionLayersCount();
-				for (int layerID = 0; layerID < occluder_layers; layerID++)
-				{
-					var syncRowInstance = (HBoxContainer)syncRow.Instantiate();
-					OccluderNode.AddChild(syncRowInstance);
-					syncRowInstance.GetNode<Label>("Title").Text = "Custom Data - " + layerID;
-					syncRowInstance.GetNode<Button>("Copy").Pressed += () => OnLayerCopy(layerID);
-					syncRowInstance.GetNode<Button>("Paste").Pressed += () => OnOccluderPaste(layerID);
-				}
-				OccluderNode.Visible = occluder_layers > 0;
+		var navigationLayers = tileSet.GetNavigationLayersCount();
+		for (int layerID = 0; layerID < navigationLayers; layerID++)
+		{
+			var syncRowInstance = (HBoxContainer)syncRow.Instantiate();
+			NavigationNode.AddChild(syncRowInstance);
+			syncRowInstance.GetNode<Label>("Title").Text = "Layer " + layerID;
 
-				var titles = FindChildren("Title");
-				foreach (Button node in titles.Cast<Button>())
+			int localLayer = layerID;
+			syncRowInstance.GetNode<Button>("Copy").Pressed += () => OnLayerCopy(localLayer);
+			syncRowInstance.GetNode<Button>("Paste").Pressed += () => OnNavigationPaste(localLayer);
+		}
+		NavigationNode.Visible = navigationLayers > 0;
+
+		var custom_data_layers = tileSet.GetCustomDataLayersCount();
+		for (int layerID = 0; layerID < custom_data_layers; layerID++)
+		{
+			var syncRowInstance = (HBoxContainer)syncRow.Instantiate();
+			CustomDataNode.AddChild(syncRowInstance);
+			var customDataName = tileSet.GetCustomDataLayerName(layerID);
+			syncRowInstance.GetNode<Label>("Title").Text = "Custom Data - " + customDataName;
+
+			int localLayer = layerID;
+			string localName = customDataName;
+			syncRowInstance.GetNode<Button>("Copy").Pressed += () => OnLayerCopy(localLayer);
+			syncRowInstance.GetNode<Button>("Copy").Pressed += () => OnCustomDataCopy(localName);
+			syncRowInstance.GetNode<Button>("Paste").Pressed += () => OnCustomDataPaste(localLayer);
+		}
+		CustomDataNode.Visible = custom_data_layers > 0;
+
+		var occluder_layers = tileSet.GetOcclusionLayersCount();
+		for (int layerID = 0; layerID < occluder_layers; layerID++)
+		{
+			var syncRowInstance = (HBoxContainer)syncRow.Instantiate();
+			OccluderNode.AddChild(syncRowInstance);
+			syncRowInstance.GetNode<Label>("Title").Text = "Occluder - " + layerID;
+
+			int localLayer = layerID;
+			syncRowInstance.GetNode<Button>("Copy").Pressed += () => OnLayerCopy(localLayer);
+			syncRowInstance.GetNode<Button>("Paste").Pressed += () => OnOccluderPaste(localLayer);
+		}
+		OccluderNode.Visible = occluder_layers > 0;
+
+		var titles = FindChildren("Title");
+		foreach (Button node in titles.Cast<Button>())
+		{
+			node.Pressed += () => OnButtonPressed(node);
+			if (node.GetParent() is Control parent && parent.Visible)
+			{
+				parent.AddSibling(new HSeparator());
+			}
+		}
+	}
+
+	private void ClearDynamicViews()
+	{
+		foreach (var container in new[] { SourceNode, PhysicNode, TerrainNode, NavigationNode, CustomDataNode, OccluderNode })
+		{
+			if (container == null) continue;
+
+			foreach (Node child in container.GetChildren())
+			{
+				if (child.Name == "Title" || (child is HSeparator && child.GetIndex() == 1))
 				{
-					node.Pressed += () => OnButtonPressed(node);
-					if (node.GetParent() is Control parent && parent.Visible)
-					{
-						parent.AddSibling(new HSeparator());
-					}
+					continue;
 				}
+
+				child.QueueFree();
 			}
 		}
 	}

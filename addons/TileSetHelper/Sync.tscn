@@ -1,19 +1,16 @@
 [gd_scene format=3 uid="uid://nw68iqfedb00"]
 
 [ext_resource type="Script" uid="uid://dsn6jjfo20cy7" path="res://addons/TileSetHelper/Sync.cs" id="1_en04k"]
-[ext_resource type="PackedScene" uid="uid://bi7bc24c1nx0h" path="res://addons/TileSetHelper/SyncRow.tscn" id="2_mjpsm"]
+[ext_resource type="PackedScene" uid="uid://bi7bc24c1nx0h" path="res://addons/TileSetHelper/SyncRow.tscn" id="2_sxig4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_en04k"]
 
-[node name="Sync" type="AcceptDialog" unique_id=1979220089 node_paths=PackedStringArray("SourceNode", "PhysicNode", "TerrainNode", "NavigationNode", "CustomDataNode", "OccluderNode")]
+[node name="Sync" type="ScrollContainer" unique_id=1422858186 node_paths=PackedStringArray("SourceNode", "PhysicNode", "TerrainNode", "NavigationNode", "CustomDataNode", "OccluderNode")]
 auto_translate_mode = 2
-oversampling_override = 1.0
-title = "Sync"
-initial_position = 2
-size = Vector2i(500, 500)
-visible = true
+offset_right = 500.0
+offset_bottom = 500.0
 script = ExtResource("1_en04k")
-syncRow = ExtResource("2_mjpsm")
+syncRow = ExtResource("2_sxig4")
 SourceNode = NodePath("Main/HBoxContainer/Source_Node")
 PhysicNode = NodePath("Main/HBoxContainer/Data_Panel/Physic_Node")
 TerrainNode = NodePath("Main/HBoxContainer/Data_Panel/Terrain_Node")
@@ -22,10 +19,7 @@ CustomDataNode = NodePath("Main/HBoxContainer/Data_Panel/Custom_Data_Node")
 OccluderNode = NodePath("Main/HBoxContainer/Data_Panel/Occluder_Node")
 
 [node name="Main" type="VBoxContainer" parent="." unique_id=17532561]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 492.0
-offset_bottom = 451.0
+layout_mode = 2
 
 [node name="HSeparator" type="HSeparator" parent="Main" unique_id=1755020795]
 layout_mode = 2
@@ -45,7 +39,7 @@ size_flags_vertical = 0
 [node name="VSeparator" type="VSeparator" parent="Main/HBoxContainer" unique_id=622745877]
 layout_mode = 2
 
-[node name="Data_Panel" type="VBoxContainer" parent="Main/HBoxContainer" unique_id=330306142]
+[node name="Data_Panel" type="HBoxContainer" parent="Main/HBoxContainer" unique_id=1816411997]
 layout_mode = 2
 size_flags_horizontal = 3
 

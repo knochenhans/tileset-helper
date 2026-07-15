@@ -6,7 +6,7 @@ using Godot.Collections;
 public partial class TileSetHelper : EditorPlugin
 {
 	private EditorDock dockInstance;
-	private Button syncButton;
+	private Sync syncUI;
 
 	public override void _EnterTree()
 	{
@@ -15,51 +15,57 @@ public partial class TileSetHelper : EditorPlugin
 			Name = "TileSet Helper",
 			Title = "TileSet Helper",
 			AvailableLayouts = EditorDock.DockLayout.Horizontal | EditorDock.DockLayout.Vertical,
-			DefaultSlot = EditorDock.DockSlot.Bottom, // Places it cleanly in the bottom panel
+			DefaultSlot = EditorDock.DockSlot.Bottom,
 			CustomMinimumSize = new Vector2(0, 150)
 		};
 
-		syncButton = new Button
+		var packed = GD.Load<PackedScene>("res://addons/TileSetHelper/Sync.tscn");
+		if (packed != null)
 		{
-			Text = "Sync TileSet",
-			SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter,
-			SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
-		};
-		syncButton.Pressed += OnEditorButtonPressed;
+			syncUI = (Sync)packed.Instantiate();
 
-		dockInstance.AddChild(syncButton);
+			syncUI.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+			syncUI.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+
+			dockInstance.AddChild(syncUI);
+		}
+		else
+		{
+			GD.PrintErr("TileSetHelper: Failed to load Sync.tscn");
+		}
 
 		AddDock(dockInstance);
+
+		EditorInterface.Singleton.GetSelection().SelectionChanged += OnSelectionChanged;
 	}
 
-	private void OnEditorButtonPressed()
+	private void OnSelectionChanged()
 	{
+		if (syncUI == null) return;
+
 		Array selectedNodes = (Array)EditorInterface.Singleton.GetSelection().GetSelectedNodes();
 		foreach (var obj in selectedNodes)
 		{
 			Node node = (Node)(GodotObject)obj;
-			if (node == null) continue;
-
 			if (node is TileMapLayer tileMapLayer)
 			{
 				if (tileMapLayer.TileSet == null) continue;
 
-				var packed = GD.Load<PackedScene>("res://addons/TileSetHelper/Sync.tscn");
-				if (packed == null) continue;
+				syncUI.tileMapLayer = tileMapLayer;
+				syncUI.tileSet = tileMapLayer.TileSet;
 
-				Sync sync = (Sync)packed.Instantiate();
-				sync.tileMapLayer = tileMapLayer;
-				sync.tileSet = tileMapLayer.TileSet;
-
-				AddChild(sync);
-				sync.UpdateView();
-				break;
+				syncUI.UpdateView();
+				return;
 			}
 		}
+
+		// _syncUI.ClearView(); 
 	}
 
 	public override void _ExitTree()
 	{
+		EditorInterface.Singleton.GetSelection().SelectionChanged -= OnSelectionChanged;
+
 		if (dockInstance != null)
 		{
 			RemoveDock(dockInstance);
